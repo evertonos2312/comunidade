@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Perguntas;
 use App\Models\User;
 use Illuminate\Contracts\View\View as ViewView;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,9 +11,9 @@ use Illuminate\Support\Facades\View;
 use Illuminate\View\View as IlluminateViewView;
 use Livewire\Component;
 
-class DisplayUsers extends Component
+class DisplayPerguntas extends Component
 {
-    
+
     public $perPage = 10;
     public int $quantity = 20;
 
@@ -25,17 +26,13 @@ class DisplayUsers extends Component
     public function render()
     {
 
-        $users = $this->data();
-        // echo '<pre>';
-        // print_r($users->toArray());
-        // echo '</pre>';
-        // die();
-        return view('livewire.display-users', ['users' => $users->toArray()]);
+        $perguntas = $this->data();
+        return view('livewire.display-perguntas', ['perguntas' => $perguntas->toArray()]);
     }
 
     private function data()
     {
-        return User::take($this->quantity)->get();
+        return Perguntas::take($this->quantity)->get();
     }
 
 

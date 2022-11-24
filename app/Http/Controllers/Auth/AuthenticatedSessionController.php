@@ -17,6 +17,10 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
+        session()->has('AUTH_TOKEN');
+        if(session()->has('AUTH_TOKEN')){
+            return redirect()->to('dashboard');
+        }
         return view('auth.login');
     }
 
@@ -44,6 +48,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
+        session()->flush();
 
         $request->session()->invalidate();
 
