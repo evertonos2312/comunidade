@@ -62,6 +62,11 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
+        'question' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/questions.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
 
         'daily' => [
             'driver' => 'daily',
