@@ -3,6 +3,12 @@ import laravel from 'laravel-vite-plugin';
 import path from 'path'
 
 export default defineConfig({
+    server: {
+        hmr: {
+            protocol: 'ws',
+            host: 'localhost'
+        }
+    },
     plugins: [
         laravel({
             input: [
