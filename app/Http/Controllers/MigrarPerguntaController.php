@@ -24,10 +24,12 @@ class MigrarPerguntaController extends Controller
         $pergunta = $this->perguntaService->getPergunta($validated['pergunta']);
         if($pergunta){
             $migrated = $this->perguntaService->storeQuestionInCommunity($pergunta, $validated['area']);
-            redirect('log-viewer');
-
+            if($migrated){
+                $this->perguntaService->storeReplyPostToQuestion($migrated['question'], $migrated['reply'], $migrated['publishedAt']);
+                $this->perguntaService->updatePergunta($pergunta->id);
+            }
         }
-
+       return redirect('log-viewer');
     }
 
 

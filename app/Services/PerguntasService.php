@@ -95,7 +95,7 @@ class PerguntasService
             ];
 
             Log::channel('question')->error('Failed to migrate question',$log);
-            return false;
+            return null;
         }
         else {
             $log = [
@@ -103,24 +103,23 @@ class PerguntasService
                 "legalmaticId" => $pergunta->id
             ];
             Log::channel('question')->info('Question migrated', $log);
-            $this->storeReplyPostToQuestion($response->getData()['createPost']['id'], $pergunta->resposta, $publishedAt);
-
-            $perguntaLegalmatic = $this->perguntaRepository->updateMigrationPergunta($pergunta->id);
-            $log = [
-              "id" => $pergunta->id
-            ];
-            if($perguntaLegalmatic){
-                Log::channel('question')->info('Question updated in legalmatic', $log);
-            } else {
-                Log::channel('question')->error('Failed to update question in legalmatic',$log);
-            }
-           return true;
+           return ['question' => $response->getData()['createPost']['id'], 'reply' => $pergunta->resposta, 'publishedAt' => $publishedAt];
         }
     }
 
     public function updatePergunta(string $identify)
     {
-        return $this->perguntaRepository->updateMigrationPergunta($identify);
+        $log = [
+            "id" => $identify
+        ];
+        $updated = $this->perguntaRepository->updateMigrationPergunta($identify);
+        if($updated){
+            Log::channel('question')->info('Question updated in legalmatic', $log);
+            return true;
+        } else {
+            Log::channel('question')->error('Failed to update question in legalmatic',$log);
+            return false;
+        }
     }
 
     public function storeReplyPostToQuestion($questionIdentify, $replyText, $publishedAt)
