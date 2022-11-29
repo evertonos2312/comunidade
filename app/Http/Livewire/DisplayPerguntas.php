@@ -42,17 +42,24 @@ class DisplayPerguntas extends Component
 
     private function data()
     {
-        return DB::table('perguntas')
-            ->where('migrado_em', NULL)
-            ->whereNotNull('resposta')
-            ->when($this->migrado_em, function ($query) {
-                $query->whereNotNull('migrado_em');
-            })
-            ->when($this->area, function ($query, $area){
-                $query->where('area', $area);
-            })->take($this->quantity)
-            ->orderBy('datapergunta')
-            ->get();
+        $query = DB::table('perguntas')
+                ->whereNotNull('resposta')
+                ->whereNot(function ($query) {
+                    $query->where('resposta', 'like', "%table%");
+                })
+                ->when($this->area, function ($query, $area){
+                    $query->where('area', $area);
+                });
+        if($this->migrado_em){
+            $query->whereNotNull('migrado_em');
+        } else {
+            $query->where('migrado_em', NULL);
+        }
+        $query->take($this->quantity)
+            ->orderBy('datapergunta');
+
+        return $query->get();
+
     }
 
     public function load()

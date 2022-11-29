@@ -18,7 +18,7 @@ class EnsureAuthUser
     public function handle(Request $request, Closure $next)
     {
         if(!session()->has('AUTH_USER')){
-            return route('login');
+            return redirect('login');
         }
         $authUser = session()->get('AUTH_USER');
         View::composer('*', static function ($view) use ($authUser) {

@@ -16,9 +16,12 @@ class Pergunta extends Model
      */
     protected $fillable = [
         'migrado_em',
+        'idTribe'
     ];
 
     public $timestamps = false;
+
+
 
 
     public function perguntaAreaTipo($pergunta)
@@ -27,8 +30,19 @@ class Pergunta extends Model
             ->join('perguntastipo', 'perguntas.idtipo', '=', 'perguntastipo.id')
             ->select('perguntas.*', 'perguntasassunto.titulo as assunto', 'perguntastipo.titulo as tipo')
             ->where('migrado_em', NULL)
+            ->whereNot(function ($query) {
+                $query->where('resposta', 'like', "%table%");
+            })
             ->where('perguntas.id', $pergunta)
             ->whereNotNull('resposta')
             ->firstOrFail();
     }
+
+    public function getPerguntaMigrada($pergunta)
+    {
+        return Pergunta::where('id', $pergunta)
+            ->whereNotNull('idTribe')
+            ->firstOrFail();
+    }
+
 }

@@ -22,7 +22,7 @@
             </div>
             <div class="col-span-1">
                 @if($pergunta->migrado_em)
-                <button class="w-full btn-sm btn-success  flex justify-center">Migrado</button>
+                <button class="w-full btn btn-sm btn-success  flex justify-center">Migrado</button>
                 @else
                 <button data-bs-toggle="modal" data-bs-target="#formModal" data-bs-whatever="{{$pergunta->id}}" class="w-full btn btn-sm btn-primary flex justify-center">Migrar</button>
                 @endif
