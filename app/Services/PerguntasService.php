@@ -5,11 +5,12 @@ namespace App\Services;
 use App\Models\Pergunta;
 use App\Repositories\PerguntasRepository;
 use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Softonic\GraphQL\ClientBuilder;
 use Illuminate\Support\Facades\Log;
 
-class PerguntasService
+class PerguntasService implements ShouldQueue
 {
     protected $perguntaRepository;
 
@@ -25,6 +26,11 @@ class PerguntasService
 
     public function storeQuestionInCommunity(Pergunta $pergunta, string $spaceId)
     {
+        $log = [
+            "id" => $pergunta->id
+        ];
+        Log::channel('question')->info('Question migration started: ', $log);
+        sleep(1);
         $accessToken = session()->get('AUTH_USER')['token'];
         $postTypeDiscussion = 'pFx8jaZAk22gnhS';
 
@@ -102,8 +108,10 @@ class PerguntasService
                 "id" => $response->getData()['createPost']['id'],
                 "legalmaticId" => $pergunta->id
             ];
-            Log::channel('question')->info('Question migrated', $log);
-           return ['question' => $response->getData()['createPost']['id'], 'reply' => $pergunta->resposta, 'publishedAt' => $publishedAt];
+            sleep(1);
+            Log::channel('question')->info('Question migration finished', $log);
+            $this->updatePergunta($pergunta->id);
+            $this->storeReplyPostToQuestion($response->getData()['createPost']['id'], $pergunta->resposta, $publishedAt);
         }
     }
 
@@ -112,9 +120,11 @@ class PerguntasService
         $log = [
             "id" => $identify
         ];
+        Log::channel('question')->info('Question updated started in legalmatic', $log);
+        sleep(1);
         $updated = $this->perguntaRepository->updateMigrationPergunta($identify);
         if($updated){
-            Log::channel('question')->info('Question updated in legalmatic', $log);
+            Log::channel('question')->info('Question updated finished in legalmatic', $log);
             return true;
         } else {
             Log::channel('question')->error('Failed to update question in legalmatic',$log);
@@ -124,6 +134,11 @@ class PerguntasService
 
     public function storeReplyPostToQuestion($questionIdentify, $replyText, $publishedAt)
     {
+        $log = [
+            "id" => $questionIdentify
+        ];
+        Log::channel('question')->info('Question reply started',$log);
+        sleep(1);
         $accessToken = session()->get('AUTH_USER')['token'];
         $postTypeDiscussion = 'pFx8jaZAk22gnhS';
         $client = ClientBuilder::build(
@@ -140,18 +155,19 @@ class PerguntasService
                    postTypeId: $postType,
                    mappingFields: [
                    {
-                    key: "title"
-                    type: text
-                    value: "\"\""
-                    },
-                    {
-                    key: "content"
-                    type: html
-                    value: $replyText
-                    }
-                ]
-            publishedAt: $publishedAt
-            publish: true
+                        key: "title"
+                        type: text
+                        value: "\"\""
+                   },
+                   {
+                        key: "content"
+                        type: html
+                        value: $replyText
+                   }
+                   ]
+                    ownerId: "SA9umgT5mf"
+                    publishedAt: $publishedAt
+                    publish: true
                 })
             {
                 id
@@ -173,15 +189,14 @@ class PerguntasService
                 "question" => $questionIdentify
             ];
             Log::channel('question')->error('Failed to reply question',$log);
-            return false;
         }
         else {
             $log = [
                 "id" => $response->getData()['createReply']['id'],
                 "question" => $questionIdentify
             ];
-            Log::channel('question')->info('Question replied successfully', $log);
-            return true;
+            Log::channel('question')->info('Question replied finished', $log);
+            sleep(1);
         }
     }
 }
