@@ -22,6 +22,7 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
     private $pergunta;
     private $area;
     private $token;
+    public $consultor;
 
     /**
      * The number of seconds after which the job's unique lock will be released.
@@ -47,11 +48,12 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
      *
      * @return void
      */
-    public function __construct( $pergunta, $area, $authToken)
+    public function __construct( $pergunta, $area, $authToken, $consultor)
     {
         $this->pergunta = $pergunta;
         $this->area = $area;
         $this->token = $authToken;
+        $this->consultor = $consultor;
     }
 
     /**
@@ -88,7 +90,7 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
         $publishedAt = date("Y-m-d\TH:i:s\Z", strtotime($pergunta->datapergunta));
 
         //Setar espaço TESTE API provisoriamente
-        $spaceId = "uDRrIKgHH2SQ";
+        $spaceId = "Y30gpnXAZ7Ql";
 
         if($pergunta->assunto == $pergunta->tipo){
             $tagNames = [
@@ -162,6 +164,7 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
             $update = $pergunta->update(['idTribe' => $response->getData()['createPost']['id']]);
             sleep(1);
             Log::channel('question')->info('Question migration finished', $log);
+
         }
     }
 }

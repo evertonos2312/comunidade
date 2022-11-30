@@ -13,7 +13,7 @@
                     </option>
                 @endforeach
             </select>
-            <button type="submit" class="btn btn-primary">Enviar</button>
+            <button type="submit" class="btn btn-sm btn-primary">Enviar</button>
         </div>
     </form>
 </div>
