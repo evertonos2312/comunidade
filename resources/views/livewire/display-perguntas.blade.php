@@ -42,8 +42,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" id="formPergunta" action="{{route('migrar.pergunta')}}">
+                    <form  method="post" id="formPergunta" action="{{route('migrar.pergunta')}}">
                         @csrf
+                        <input type="hidden" name="areaLegalmatic" value="{{$area}}">
                         <div class="mb-3">
                             <label for="recipient-name" class="col-form-label">Pergunta ID:</label>
                             <input readonly type="text" name="pergunta" class="form-control" id="recipient-name">

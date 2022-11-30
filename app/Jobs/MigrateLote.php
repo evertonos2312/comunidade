@@ -21,18 +21,20 @@ class MigrateLote implements ShouldQueue
     public $area;
     public $token;
     public $perguntas;
+    public $consultor;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Collection $perguntas ,$limit, $area, $token)
+    public function __construct(Collection $perguntas ,$limit, $area, $token, $consultor)
     {
         $this->limit = $limit;
         $this->area = $area;
         $this->token = $token;
         $this->perguntas = $perguntas;
+        $this->consultor = $consultor;
     }
 
     /**
@@ -45,7 +47,7 @@ class MigrateLote implements ShouldQueue
         foreach ($this->perguntas as $pergunta) {
             MigrateQuestion::withChain([
                 new UpdateQuestionLegalmatic($pergunta->id),
-                new ReplyQuestion($pergunta->id, $this->token)
+                new ReplyQuestion($pergunta->id, $this->token, $this->consultor)
             ])->dispatch($pergunta->id, $this->area, $this->token);
         }
     }

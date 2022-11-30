@@ -26,6 +26,7 @@ class StorePerguntasRequest extends FormRequest
         return [
             'pergunta' => 'required',
             'area' => 'required',
+            'areaLegalmatic' => 'required'
         ];
     }
 }
