@@ -72,10 +72,9 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
     public function handle()
     {
         $perguntaModel = new Pergunta();
-        try {
-            $pergunta = $perguntaModel->perguntaAreaTipo($this->pergunta);
-        } catch (\Exception $exception){
-            $this->fail($exception);
+        $pergunta = $perguntaModel->perguntaAreaTipo($this->pergunta);
+        if(!$pergunta){
+            $this->fail();
         }
 
         $log = [

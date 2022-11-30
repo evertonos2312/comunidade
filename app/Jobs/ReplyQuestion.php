@@ -20,16 +20,18 @@ class ReplyQuestion implements ShouldQueue
 
     public $questionIdentify;
     public $token;
+    public $consultor;
     public $tries = 5;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($questionIdentify, $token)
+    public function __construct($questionIdentify, $token, $consultor)
     {
         $this->questionIdentify = $questionIdentify;
         $this->token = $token;
+        $this->consultor = $consultor;
     }
 
     /**
@@ -74,7 +76,7 @@ class ReplyQuestion implements ShouldQueue
         $publishedAt = date("Y-m-d\TH:i:s\Z", strtotime($pergunta->datapergunta));
 
         $mutation = <<<'MUTATION'
-            mutation ($postType: String!, $postId: ID!, $replyText: String!, $publishedAt: DateTime){
+            mutation ($postType: String!, $postId: ID!, $replyText: String!, $publishedAt: DateTime, $ownerId: ID){
               createReply(postId: $postId, input: {
                    postTypeId: $postType,
                    mappingFields: [
@@ -89,8 +91,8 @@ class ReplyQuestion implements ShouldQueue
                         value: $replyText
                    }
                    ]
-                    ownerId: "SA9umgT5mf"
-                    publishedAt: $publishedAt
+                    ownerId: $ownerId
+                    createdAt: $publishedAt
                     publish: true
                 })
             {
@@ -102,7 +104,8 @@ class ReplyQuestion implements ShouldQueue
             'postType' => $postTypeDiscussion,
             'postId' => $idTribe,
             'replyText' => $replyText,
-            "publishedAt" => $publishedAt
+            "publishedAt" => $publishedAt,
+            "ownerId" => $this->consultor
         ];
 
         $response = $client->query($mutation, $variables);
