@@ -79,6 +79,7 @@ class UpdateQuestionLegalmatic implements ShouldQueue, ShouldBeUnique
         $updated = $pergunta->update(['migrado_em' => now()]);
         if($updated){
             Log::channel('question')->info('Question updated finished in legalmatic', $log);
+
         } else {
             Log::channel('question')->error('Failed to update question in legalmatic',$log);
         }

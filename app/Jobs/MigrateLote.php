@@ -44,11 +44,23 @@ class MigrateLote implements ShouldQueue
      */
     public function handle()
     {
+        $listOfAllJobs = [];
+        $listAllLegalmatic = [];
+        $listAllReplies = [];
+
         foreach ($this->perguntas as $pergunta) {
-            MigrateQuestion::withChain([
-                new UpdateQuestionLegalmatic($pergunta->id),
-                new ReplyQuestion($pergunta->id, $this->token, $this->consultor)
-            ])->dispatch($pergunta->id, $this->area, $this->token);
+            $job = new MigrateQuestion($pergunta->id, $this->area, $this->token, $this->consultor);
+            $listOfAllJobs[] = $job;
+
+            $jobUpdateLegalmatic = new UpdateQuestionLegalmatic($pergunta->id);
+            $listAllLegalmatic[] = $jobUpdateLegalmatic;
+
+            $jobReplies = new ReplyQuestion($pergunta->id, $this->token, $this->consultor);
+            $listAllReplies[] = $jobReplies;
+
         }
+        Bus::batch($listOfAllJobs)->name('Migrating Questions')->dispatch();
+        Bus::batch($listAllLegalmatic)->name('Updating Questions in Legalmatic')->dispatch();
+        Bus::batch($listAllReplies)->name('Replying Questions')->dispatch();
     }
 }
