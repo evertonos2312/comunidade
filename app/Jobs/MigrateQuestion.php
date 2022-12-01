@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Pergunta;
 use App\Services\PerguntasService;
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -22,7 +23,6 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
     private $pergunta;
     private $area;
     private $token;
-    public $consultor;
 
     /**
      * The number of seconds after which the job's unique lock will be released.
@@ -48,12 +48,11 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
      *
      * @return void
      */
-    public function __construct( $pergunta, $area, $authToken, $consultor)
+    public function __construct( $pergunta, $area, $authToken)
     {
         $this->pergunta = $pergunta;
         $this->area = $area;
         $this->token = $authToken;
-        $this->consultor = $consultor;
     }
 
     /**
@@ -83,14 +82,13 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
             "id" => $pergunta->id
         ];
         Log::channel('question')->info('Question migration started: ', $log);
-        sleep(1);
         $accessToken = $this->token;
         $postTypeDiscussion = 'pFx8jaZAk22gnhS';
 
         $publishedAt = date("Y-m-d\TH:i:s\Z", strtotime($pergunta->datapergunta));
 
         //Setar espaço TESTE API provisoriamente
-        $spaceId = "Y30gpnXAZ7Ql";
+        $spaceId = "ZrwC1AcplqF1";
 
         if($pergunta->assunto == $pergunta->tipo){
             $tagNames = [
@@ -154,15 +152,19 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
             ];
 
             Log::channel('question')->error('Failed to migrate question',$log);
-            return null;
+            $exception = new Exception($response->getErrors()[0]['message']);
+            $this->fail($exception);
         }
         else {
             $log = [
                 "id" => $response->getData()['createPost']['id'],
                 "legalmaticId" => $pergunta->id
             ];
-            $update = $pergunta->update(['idTribe' => $response->getData()['createPost']['id']]);
-            sleep(1);
+            $pergunta->update([
+                'idTribe' => $response->getData()['createPost']['id'],
+                'migrado_em' => now()
+                ]
+            );
             Log::channel('question')->info('Question migration finished', $log);
 
         }

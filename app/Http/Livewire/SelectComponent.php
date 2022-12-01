@@ -16,7 +16,7 @@ class SelectComponent extends Component
 
     public function render()
     {
-        $availableNumbers = [10, 50, 100];
+        $availableNumbers = [10, 100, 500, 1000];
         return view('livewire.select-component', [
             'availableNumbers' => $availableNumbers,
             'area' => $this->area,

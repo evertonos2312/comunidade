@@ -68,7 +68,6 @@ class UpdateQuestionLegalmatic implements ShouldQueue, ShouldBeUnique
             "id" => $this->pergunta
         ];
         Log::channel('question')->info('Question updated started in legalmatic', $log);
-        sleep(1);
         $perguntaModel = new Pergunta();
         try {
             $pergunta = $perguntaModel->where('id', $this->pergunta)->firstOrfail();
@@ -82,6 +81,7 @@ class UpdateQuestionLegalmatic implements ShouldQueue, ShouldBeUnique
 
         } else {
             Log::channel('question')->error('Failed to update question in legalmatic',$log);
+            $this->fail();
         }
     }
 }

@@ -26,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        RateLimiter::for('questions', fn () => Limit::perMinutes(15, 2450));
+        RateLimiter::for('questions', fn () => Limit::perMinutes(5, 2200));
     }
 }

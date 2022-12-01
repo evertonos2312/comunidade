@@ -24,7 +24,7 @@ class StoreLoteRequest extends FormRequest
      */
     public function rules()
     {
-        $availableNumbers = [10, 50, 100];
+        $availableNumbers = [10, 100, 500, 1000];
         return [
             'number' => ['required', Rule::in($availableNumbers)],
             'area' => 'required',
