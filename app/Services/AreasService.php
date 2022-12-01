@@ -20,7 +20,7 @@ class AreasService
             );
             $query = <<<'QUERY'
                 {
-                    spaces(limit: 10) {
+                    spaces(limit: 30) {
                         nodes {
                             id
                             type

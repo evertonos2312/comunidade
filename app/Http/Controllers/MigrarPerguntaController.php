@@ -34,7 +34,6 @@ class MigrarPerguntaController extends Controller
         $token = session()->get('AUTH_USER')['token'];
         $consultor = $this->membersService->getMemberFromCommunity($validated['areaLegalmatic']);
         MigrateQuestion::withChain([
-            new UpdateQuestionLegalmatic($validated['pergunta']),
             new ReplyQuestion($validated['pergunta'], $token, $consultor)
         ])->dispatch($validated['pergunta'], $validated['area'], $token);
 

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Exception;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use App\Models\Pergunta;
 use Illuminate\Bus\Batchable;
@@ -62,7 +63,6 @@ class ReplyQuestion implements ShouldQueue
         }
         $idTribe = $pergunta->idTribe;
         Log::channel('question')->info('Question reply started',$log);
-        sleep(1);
         $accessToken = $this->token;
         $postTypeDiscussion = 'pFx8jaZAk22gnhS';
 
@@ -116,6 +116,8 @@ class ReplyQuestion implements ShouldQueue
                 "question" => $idTribe
             ];
             Log::channel('question')->error('Failed to reply question',$log);
+            $exception = new Exception($response->getErrors()[0]['message']);
+            $this->fail($exception);
         }
         else {
             $log = [
@@ -123,7 +125,6 @@ class ReplyQuestion implements ShouldQueue
                 "question" => $idTribe
             ];
             Log::channel('question')->info('Question replied finished', $log);
-            sleep(1);
         }
     }
 }

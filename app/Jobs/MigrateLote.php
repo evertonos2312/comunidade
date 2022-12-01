@@ -3,15 +3,18 @@
 namespace App\Jobs;
 
 use App\Models\Pergunta;
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class MigrateLote implements ShouldQueue
 {
@@ -38,6 +41,16 @@ class MigrateLote implements ShouldQueue
     }
 
     /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array
+     */
+    public function middleware()
+    {
+        return [(new RateLimitedWithRedis('questions'))->dontRelease()];
+    }
+
+    /**
      * Execute the job.
      *
      * @return void
@@ -45,22 +58,18 @@ class MigrateLote implements ShouldQueue
     public function handle()
     {
         $listOfAllJobs = [];
-        $listAllLegalmatic = [];
         $listAllReplies = [];
 
         foreach ($this->perguntas as $pergunta) {
             $job = new MigrateQuestion($pergunta->id, $this->area, $this->token, $this->consultor);
             $listOfAllJobs[] = $job;
 
-            $jobUpdateLegalmatic = new UpdateQuestionLegalmatic($pergunta->id);
-            $listAllLegalmatic[] = $jobUpdateLegalmatic;
-
             $jobReplies = new ReplyQuestion($pergunta->id, $this->token, $this->consultor);
             $listAllReplies[] = $jobReplies;
 
         }
         Bus::batch($listOfAllJobs)->name('Migrating Questions')->dispatch();
-        Bus::batch($listAllLegalmatic)->name('Updating Questions in Legalmatic')->dispatch();
+        sleep(3);
         Bus::batch($listAllReplies)->name('Replying Questions')->dispatch();
     }
 }
