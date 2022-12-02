@@ -47,4 +47,12 @@ class Pergunta extends Model
             ->firstOrFail();
     }
 
+    public function getAllPerguntasMigradas()
+    {
+        return Pergunta::whereNotNull('idTribe')
+            ->whereNotNull('migrado_em')
+            ->where('resposta_tribe', NULL)
+            ->all();
+    }
+
 }

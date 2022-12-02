@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Pergunta;
+use App\Services\AreasService;
 use App\Services\PerguntasService;
 use Exception;
 use Illuminate\Bus\Batchable;
@@ -72,10 +73,14 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
+        sleep(1);
         $perguntaModel = new Pergunta();
         $pergunta = $perguntaModel->perguntaAreaTipo($this->pergunta);
+        $spaceId = (new AreasService())->getOneAreaFromCommunity($this->area, $this->token);
+
         if(!$pergunta){
-            $this->fail();
+            $exception = new Exception("Question not found in database");
+            $this->fail($exception);
         }
 
         $log = [
@@ -88,7 +93,7 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
         $publishedAt = date("Y-m-d\TH:i:s\Z", strtotime($pergunta->datapergunta));
 
         //Setar espaço TESTE API provisoriamente
-        $spaceId = "6fG1LyvAob4J";
+//        $spaceId = "Va2K5eBhIHTd";
 
         if($pergunta->assunto == $pergunta->tipo){
             $tagNames = [
@@ -145,6 +150,7 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
         ];
 
         $response = $client->query($mutation, $variables);
+        sleep(3);
         if($response->hasErrors()) {
             $log = [
                 "message" => $response->getErrors(),
@@ -166,6 +172,7 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
                 ]
             );
             Log::channel('question')->info('Question migration finished', $log);
+            sleep(1);
 
         }
     }

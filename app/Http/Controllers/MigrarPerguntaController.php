@@ -6,6 +6,7 @@ use App\Http\Requests\StoreLoteRequest;
 use App\Http\Requests\StorePerguntasRequest;
 use App\Jobs\MigrateLote;
 use App\Jobs\MigrateQuestion;
+use App\Jobs\ReplyMigratedQuestions;
 use App\Jobs\ReplyQuestion;
 use App\Jobs\StoreQuestion;
 use App\Jobs\UpdateQuestionLegalmatic;
@@ -55,9 +56,21 @@ class MigrarPerguntaController extends Controller
                 $query->where('resposta', 'like', "%table%");
             })->where('area',  $area)
             ->limit($validated['number'])
+            ->orderByDesc('datapergunta')
             ->get();
 
         MigrateLote::dispatch($perguntas ,$validated['number'], $area, $token, $consultor);
         return redirect('horizon/batches');
+    }
+
+    public function replyMigratedQuestions()
+    {
+        $token = session()->get('AUTH_USER')['token'];
+        $perguntas = (new Pergunta)->getAllPerguntasMigradas();
+        if($perguntas){
+            ReplyMigratedQuestions::dispatch($perguntas, $token);
+            return redirect('horizon/batches');
+        }
+        die('questions not found');
     }
 }
