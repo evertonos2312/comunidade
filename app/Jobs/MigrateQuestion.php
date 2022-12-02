@@ -88,7 +88,7 @@ class MigrateQuestion implements ShouldQueue, ShouldBeUnique
         $publishedAt = date("Y-m-d\TH:i:s\Z", strtotime($pergunta->datapergunta));
 
         //Setar espaço TESTE API provisoriamente
-        $spaceId = "ZrwC1AcplqF1";
+        $spaceId = "6fG1LyvAob4J";
 
         if($pergunta->assunto == $pergunta->tipo){
             $tagNames = [

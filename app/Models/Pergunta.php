@@ -16,7 +16,8 @@ class Pergunta extends Model
      */
     protected $fillable = [
         'migrado_em',
-        'idTribe'
+        'idTribe',
+        'resposta_tribe'
     ];
 
     public $timestamps = false;
@@ -42,6 +43,7 @@ class Pergunta extends Model
     {
         return Pergunta::where('id', $pergunta)
             ->whereNotNull('idTribe')
+            ->where('resposta_tribe', NULL)
             ->firstOrFail();
     }
 
