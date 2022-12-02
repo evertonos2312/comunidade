@@ -124,6 +124,10 @@ class ReplyQuestion implements ShouldQueue
                 "id" => $response->getData()['createReply']['id'],
                 "question" => $idTribe
             ];
+            $pergunta->update([
+                    'resposta_tribe' => now()
+                ]
+            );
             Log::channel('question')->info('Question replied finished', $log);
         }
     }
