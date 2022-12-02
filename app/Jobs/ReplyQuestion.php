@@ -22,7 +22,7 @@ class ReplyQuestion implements ShouldQueue
     public $questionIdentify;
     public $token;
     public $consultor;
-    public $tries = 5;
+    public $tries = 1;
     /**
      * Create a new job instance.
      *
@@ -52,6 +52,7 @@ class ReplyQuestion implements ShouldQueue
      */
     public function handle()
     {
+        sleep(1);
         $log = [
             "id" => $this->questionIdentify
         ];
@@ -107,12 +108,13 @@ class ReplyQuestion implements ShouldQueue
             "publishedAt" => $publishedAt,
             "ownerId" => $this->consultor
         ];
-
+        sleep(1);
         $response = $client->query($mutation, $variables);
+        sleep(3);
 
         if($response->hasErrors()) {
             $log = [
-                "message" => $response->getErrors(),
+                "message" => $response->getErrors()[0]['message'],
                 "question" => $idTribe
             ];
             Log::channel('question')->error('Failed to reply question',$log);
@@ -124,11 +126,13 @@ class ReplyQuestion implements ShouldQueue
                 "id" => $response->getData()['createReply']['id'],
                 "question" => $idTribe
             ];
+            sleep(1);
             $pergunta->update([
                     'resposta_tribe' => now()
                 ]
             );
             Log::channel('question')->info('Question replied finished', $log);
+            sleep(1);
         }
     }
 }

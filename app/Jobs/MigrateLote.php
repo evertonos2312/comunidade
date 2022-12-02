@@ -25,6 +25,7 @@ class MigrateLote implements ShouldQueue
     public $token;
     public $perguntas;
     public $consultor;
+    public $tries = 3;
 
     /**
      * Create a new job instance.
@@ -69,7 +70,7 @@ class MigrateLote implements ShouldQueue
 
         }
         Bus::batch($listOfAllJobs)->name('Migrating Questions')->dispatch();
-        sleep(3);
+        sleep(5);
         Bus::batch($listAllReplies)->name('Replying Questions')->dispatch();
     }
 }

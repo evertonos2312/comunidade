@@ -56,7 +56,7 @@ class DisplayPerguntas extends Component
             $query->where('migrado_em', NULL);
         }
         $query->take($this->quantity)
-            ->orderBy('datapergunta');
+            ->orderByDesc('datapergunta');
 
         return $query->get();
 
