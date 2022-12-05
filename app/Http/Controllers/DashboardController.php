@@ -34,6 +34,6 @@ class DashboardController extends Controller
             }
         }
 
-        return view('dashboard', ['migrados' => $anosPerguntas]);
+        return view('dashboard', ['totalPerguntas' => $totalPerguntas,'migrados' => $anosPerguntas]);
     }
 }

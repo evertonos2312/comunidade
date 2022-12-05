@@ -52,7 +52,7 @@ class ReplyMigratedQuestions implements ShouldQueue
         foreach ($this->perguntas as $pergunta) {
             $consultor = (new MembersService())->getMemberFromCommunity($pergunta->area);
             $jobReplies = new ReplyQuestion($pergunta->id, $this->token, $consultor);
-            $listAllReplies = $jobReplies;
+            $listAllReplies[] = $jobReplies;
         }
         Bus::batch($listAllReplies)->name('Retry Replying Questions')->dispatch();
     }

@@ -11,6 +11,7 @@
                 <div class="container">
                     <div class="my-2">
                         <h1><strong>* Informações atualizadas a cada 1 hora</strong></h1>
+                        <h1 class="mt-2">Total de perguntas Legalmatic <strong> {{ number_format($totalPerguntas, 0, ',', '.') }} </strong> </h1>
                     </div>
                     <table class="table table-striped">
                         <thead>

@@ -44,6 +44,7 @@ class DisplayPerguntas extends Component
     {
         $query = DB::table('perguntas')
                 ->whereNotNull('resposta')
+                ->whereRaw('resposta <> ""')
                 ->whereNot(function ($query) {
                     $query->where('resposta', 'like', "%table%");
                 })

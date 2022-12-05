@@ -51,6 +51,7 @@ class MigrarPerguntaController extends Controller
         $perguntaModel = new Pergunta();
         $perguntas = $perguntaModel->where('migrado_em', NULL)
             ->whereNotNull('resposta')
+            ->whereRaw('resposta <> ""')
             ->where('idTribe', NULL)
             ->whereNot( function ($query) {
                 $query->where('resposta', 'like', "%table%");
