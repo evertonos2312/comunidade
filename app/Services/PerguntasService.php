@@ -24,4 +24,19 @@ class PerguntasService implements ShouldQueue
         return $this->perguntaRepository->getPerguntaComAreaTipo($pergunta);
     }
 
+    public function getTotalPerguntas()
+    {
+        return $this->perguntaRepository->getTotalPerguntasFromDatabase();
+    }
+
+    public function getTotalPerguntasAno()
+    {
+        return $this->perguntaRepository->getTotalPerguntasAnoFromDatabase();
+    }
+
+    public function getTotalMigradasPorAno(string $ano)
+    {
+        return $this->perguntaRepository->getTotalMigradasAnoFromDatabase($ano);
+    }
+
 }
