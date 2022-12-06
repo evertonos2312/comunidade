@@ -19,9 +19,11 @@ class DashboardController extends Controller
         $totalPerguntas = $this->perguntasService->getTotalPerguntas();
         $totalPerguntasAno = $this->perguntasService->getTotalPerguntasAno();
         $anosPerguntas = [];
+        $totalMigradas = 0;
         if(!empty($totalPerguntasAno)) {
             foreach ($totalPerguntasAno as $date) {
                 $migradas = $this->perguntasService->getTotalMigradasPorAno($date->ano);
+                $totalMigradas += $migradas;
                 $percent = ($migradas /  $date->count) * 100;
 
                 $atual = [
@@ -33,7 +35,12 @@ class DashboardController extends Controller
                 $anosPerguntas[] = $atual;
             }
         }
-
-        return view('dashboard', ['totalPerguntas' => $totalPerguntas,'migrados' => $anosPerguntas]);
+        $totalPercent = ($totalMigradas / $totalPerguntas) * 100;
+        return view('dashboard', [
+            'totalPerguntas' => $totalPerguntas,
+            'migrados' => $anosPerguntas,
+            'totalMigradas' => $totalMigradas,
+            'totalPercent' => $totalPercent
+        ]);
     }
 }

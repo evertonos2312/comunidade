@@ -59,18 +59,11 @@ class MigrateLote implements ShouldQueue
     public function handle()
     {
         $listOfAllJobs = [];
-        $listAllReplies = [];
 
         foreach ($this->perguntas as $pergunta) {
             $job = new MigrateQuestion($pergunta->id, $this->area, $this->token, $this->consultor);
             $listOfAllJobs[] = $job;
-
-            $jobReplies = new ReplyQuestion($pergunta->id, $this->token, $this->consultor);
-            $listAllReplies[] = $jobReplies;
-
         }
         Bus::batch($listOfAllJobs)->name('Migrating Questions')->dispatch();
-        sleep(5);
-        Bus::batch($listAllReplies)->name('Replying Questions')->dispatch();
     }
 }

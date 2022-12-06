@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Services\MembersService;
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -50,7 +51,11 @@ class ReplyMigratedQuestions implements ShouldQueue
     {
         $listAllReplies = [];
         foreach ($this->perguntas as $pergunta) {
-            $consultor = (new MembersService())->getMemberFromCommunity($pergunta->area);
+            $consultor = (new MembersService())->getMemberFromCommunity($pergunta->area,  $this->token);
+            if(!$consultor){
+                $exception = new Exception("Consultor not found");
+                $this->fail($exception);
+            }
             $jobReplies = new ReplyQuestion($pergunta->id, $this->token, $consultor);
             $listAllReplies[] = $jobReplies;
         }

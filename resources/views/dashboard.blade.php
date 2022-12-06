@@ -11,7 +11,12 @@
                 <div class="container">
                     <div class="my-2">
                         <h1><strong>* Informações atualizadas a cada 1 hora</strong></h1>
-                        <h1 class="mt-2">Total de perguntas Legalmatic <strong> {{ number_format($totalPerguntas, 0, ',', '.') }} </strong> </h1>
+                        <h1 class="mt-2">Total de perguntas Legalmatic
+                            <strong> {{ number_format($totalPerguntas, 0, ',', '.') }} </strong> |
+                            Total de perguntas migradas
+                            <strong> {{ number_format($totalMigradas, 0, ',', '.') }} </strong> -
+                            <strong> {{ number_format($totalPercent, 2, ',', '.') }} % </strong>
+                        </h1>
                     </div>
                     <table class="table table-striped">
                         <thead>

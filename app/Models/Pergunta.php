@@ -31,8 +31,12 @@ class Pergunta extends Model
             ->join('perguntastipo', 'perguntas.idtipo', '=', 'perguntastipo.id')
             ->select('perguntas.*', 'perguntasassunto.titulo as assunto', 'perguntastipo.titulo as tipo')
             ->where('migrado_em', NULL)
+            ->where('status', '!=', 5)
             ->whereNot(function ($query) {
                 $query->where('resposta', 'like', "%table%");
+            })
+            ->whereNot(function ($query) {
+                $query->where('resposta', 'like', "%base64%");
             })
             ->where('perguntas.id', $pergunta)
             ->whereNotNull('resposta')
@@ -44,6 +48,7 @@ class Pergunta extends Model
     {
         return Pergunta::where('id', $pergunta)
             ->whereNotNull('idTribe')
+            ->where('status', '!=', 5)
             ->whereNotNull('resposta')
             ->whereRaw('resposta <> ""')
             ->where('resposta_tribe', NULL)
@@ -54,6 +59,7 @@ class Pergunta extends Model
     {
         return Pergunta::whereNotNull('idTribe')
             ->whereRaw('resposta <> ""')
+            ->where('status', '!=', 5)
             ->where('resposta_tribe', NULL)
             ->whereNotNull('migrado_em')
             ->where('resposta_tribe', NULL)

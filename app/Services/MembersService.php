@@ -8,18 +8,35 @@ use Softonic\GraphQL\ClientBuilder;
 class MembersService
 {
 
-    public function getMemberFromCommunity($area)
+    public function getMemberFromCommunity($area, $token = null)
     {
-        $email = match ($area) {
-            '1' => "comunidade.trabalhista@contmatic.com.br",
-            '2' => "comunidade.previdenciaria@contmatic.com.br",
-            '3' => "comunidade.tributaria@contmatic.com.br",
-            '4' => "comunidade.contabil@contmatic.com.br",
-            '5' => "comunidade.societaria@contmatic.com.br",
-            default => 'comunidade.trabalhista@contmatic.com.br',
-        };
-        return Cache::remember("consultor_$email", 3600, function () use ($email) {
-            $accessToken = session()->get('AUTH_USER')['token'];
+       $email = '';
+        switch ($area) {
+            case '1':
+                $email ="comunidade.trabalhista@contmatic.com.br";
+                break;
+            case '2':
+                $email = "comunidade.previdenciaria@contmatic.com.br";
+                break;
+            case '3':
+                $email =  "comunidade.tributaria@contmatic.com.br";
+                break;
+            case '4':
+                $email = "comunidade.contabil@contmatic.com.br";
+                break;
+            case '5':
+                $email = "comunidade.societaria@contmatic.com.br";
+                break;
+        }
+        if(empty($email)){
+            return false;
+        }
+        return Cache::remember("consultor_$email", 36000, function () use ($token, $email) {
+            if($token){
+                $accessToken = $token;
+            } else {
+                $accessToken = session()->get('AUTH_USER')['token'];
+            }
             $client = ClientBuilder::build(
                 getenv('COMMUNITY_GRAPHQL'),
                 [
@@ -43,7 +60,7 @@ class MembersService
                 'email' => $email,
             ];
             $response = $client->query($query, $variables);
-            $areas = null;
+            $areas = false;
             if($response->hasErrors()) {
                 echo '<pre>';
                 print_r($response->getErrors());

@@ -30,7 +30,7 @@ class PerguntasRepository
 
     public function getPerguntaById(string $identify)
     {
-        return $this->perguntaModel->where('id', $identify)->firstOrfail();
+        return $this->perguntaModel->where('id', $identify)->where('status', '!=', 5)->firstOrfail();
     }
 
     public function getTotalPerguntasFromDatabase()
@@ -38,7 +38,7 @@ class PerguntasRepository
         return Cache::remember("total_perguntas", 36000, function ()  {
            return DB::table('perguntas')->whereNot(function ($query) {
                $query->where('resposta', 'like', "%table%");
-           })->whereRaw('resposta <> ""')->whereNotNull('resposta')->count();
+           })->whereRaw('resposta <> ""')->where('status', '!=', 5)->whereNotNull('resposta')->count();
         });
     }
 
@@ -50,6 +50,7 @@ class PerguntasRepository
                     DB::raw("DATE_FORMAT(datapergunta, '%Y') AS ano"))
                 ->groupBy(DB::raw( "YEAR(datapergunta)"))
                 ->orderByDesc('ano')
+                ->where('status', '!=', 5)
                 ->whereNotNull('resposta')
                 ->whereRaw('resposta <> ""')
                 ->whereNot(function ($query) {
@@ -64,7 +65,7 @@ class PerguntasRepository
         return Cache::remember("total_migrado_$ano", 3600, function () use ($ano) {
             return DB::table('perguntas')->whereRaw('resposta <> ""')->whereNotNull('resposta')->whereNot(function ($query) {
                 $query->where('resposta', 'like', "%table%");
-            })->whereNotNull('migrado_em')->whereYear('datapergunta', $ano)->count();
+            })->whereNotNull('migrado_em')->where('status', '!=', 5)->whereNotNull('resposta_tribe')->whereYear('datapergunta', $ano)->count();
         });
     }
 }
