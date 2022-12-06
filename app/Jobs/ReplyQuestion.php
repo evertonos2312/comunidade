@@ -60,7 +60,12 @@ class ReplyQuestion implements ShouldQueue
         $pergunta = $perguntaModel->getPerguntaMigrada($this->questionIdentify);
 
         if(!isset($pergunta)){
-            $this->fail();
+            $exception = new Exception("Question not found");
+            $this->fail($exception);
+        }
+        if(!$this->consultor){
+            $exception = new Exception("Consultor not found");
+            $this->fail($exception);
         }
         $idTribe = $pergunta->idTribe;
         Log::channel('question')->info('Question reply started',$log);

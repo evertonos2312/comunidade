@@ -44,8 +44,13 @@ class DisplayPerguntas extends Component
     {
         $query = DB::table('perguntas')
                 ->whereNotNull('resposta')
+                ->whereRaw('resposta <> ""')
+                ->where('status', '!=', 5)
                 ->whereNot(function ($query) {
                     $query->where('resposta', 'like', "%table%");
+                })
+                ->whereNot(function ($query) {
+                    $query->where('resposta', 'like', "%base64%");
                 })
                 ->when($this->area, function ($query, $area){
                     $query->where('area', $area);

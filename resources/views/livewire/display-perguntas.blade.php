@@ -12,7 +12,7 @@
         @forelse ($perguntas as $pergunta)
             <div class="col-span-5 bg-gray-100 rounded">
                 <div class="mt-2 mx-2">
-                    <h5 class="font-bold">Pergunta:</h5><span>{{ $pergunta->pergunta}}</span>
+                    <h5 class="font-bold">Data: {{ date('d/m/Y',strtotime($pergunta->datapergunta)) }} -Pergunta:</h5><span>{{ $pergunta->pergunta}}</span>
                 </div>
                 <div class="mt-2 mx-2">
                     <h5 class="font-bold">Resposta:</h5>

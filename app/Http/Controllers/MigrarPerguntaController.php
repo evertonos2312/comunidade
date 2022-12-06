@@ -34,6 +34,9 @@ class MigrarPerguntaController extends Controller
         $validated = $request->validated();
         $token = session()->get('AUTH_USER')['token'];
         $consultor = $this->membersService->getMemberFromCommunity($validated['areaLegalmatic']);
+        if(!$consultor){
+            die('get consultor failed');
+        }
         MigrateQuestion::withChain([
             new ReplyQuestion($validated['pergunta'], $token, $consultor)
         ])->dispatch($validated['pergunta'], $validated['area'], $token);
@@ -47,14 +50,23 @@ class MigrarPerguntaController extends Controller
         $token = session()->get('AUTH_USER')['token'];
         $area = $validated['area'];
         $consultor = $this->membersService->getMemberFromCommunity($area);
+        if(!$consultor){
+            die('get consultor failed');
+        }
 
         $perguntaModel = new Pergunta();
         $perguntas = $perguntaModel->where('migrado_em', NULL)
             ->whereNotNull('resposta')
+            ->whereRaw('resposta <> ""')
             ->where('idTribe', NULL)
+            ->where('status', '!=', 5)
             ->whereNot( function ($query) {
                 $query->where('resposta', 'like', "%table%");
-            })->where('area',  $area)
+            })
+            ->whereNot(function ($query) {
+                $query->where('resposta', 'like', "%base64%");
+            })
+            ->where('area',  $area)
             ->limit($validated['number'])
             ->orderByDesc('datapergunta')
             ->get();
@@ -67,7 +79,8 @@ class MigrarPerguntaController extends Controller
     {
         $token = session()->get('AUTH_USER')['token'];
         $perguntas = (new Pergunta)->getAllPerguntasMigradas();
-        if($perguntas){
+
+        if(!$perguntas->isEmpty()){
             ReplyMigratedQuestions::dispatch($perguntas, $token);
             return redirect('horizon/batches');
         }
