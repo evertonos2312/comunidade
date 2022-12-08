@@ -79,7 +79,7 @@ class ReplyQuestion implements ShouldQueue
             ]
         );
         $replyText = json_encode($pergunta->resposta);
-        $publishedAt = date("Y-m-d\TH:i:s\Z", strtotime($pergunta->datapergunta));
+        $publishedAt = date("Y-m-d\TH:i:s\Z", strtotime($pergunta->dataalteracao));
 
         $mutation = <<<'MUTATION'
             mutation ($postType: String!, $postId: ID!, $replyText: String!, $publishedAt: DateTime, $ownerId: ID){
