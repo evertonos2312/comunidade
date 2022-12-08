@@ -32,6 +32,7 @@ class Pergunta extends Model
             ->select('perguntas.*', 'perguntasassunto.titulo as assunto', 'perguntastipo.titulo as tipo')
             ->where('migrado_em', NULL)
             ->where('status', '!=', 5)
+            ->where('datapergunta', '>=', '2020-01-01 00:00:01')
             ->whereNot(function ($query) {
                 $query->where('resposta', 'like', "%table%");
             })

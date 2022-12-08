@@ -66,6 +66,7 @@ class MigrarPerguntaController extends Controller
             ->whereNot(function ($query) {
                 $query->where('resposta', 'like', "%base64%");
             })
+            ->where('datapergunta', '>=', '2020-01-01 00:00:01')
             ->where('area',  $area)
             ->limit($validated['number'])
             ->orderByDesc('datapergunta')
