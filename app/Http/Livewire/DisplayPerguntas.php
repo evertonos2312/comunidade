@@ -46,6 +46,7 @@ class DisplayPerguntas extends Component
                 ->whereNotNull('resposta')
                 ->whereRaw('resposta <> ""')
                 ->where('status', '!=', 5)
+                ->where('datapergunta', '>=', '2020-01-01 00:00:01')
                 ->whereNot(function ($query) {
                     $query->where('resposta', 'like', "%table%");
                 })
