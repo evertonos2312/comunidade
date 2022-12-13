@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 class PerguntasRepository
 {
     protected $perguntaModel;
+    public int $quantity = 20;
 
     public function __construct(Pergunta $perguntaModel)
     {
@@ -35,18 +36,22 @@ class PerguntasRepository
 
     public function getTotalPerguntasFromDatabase()
     {
-        return Cache::remember("total_perguntas", 36000, function ()  {
+        return Cache::remember("total_perguntas", 3600, function ()  {
            return DB::table('perguntas')->whereNot(function ($query) {
                $query->where('resposta', 'like', "%table%");
            })->whereNot(function ($query) {
                $query->where('resposta', 'like', "%base64%");
-           })->whereRaw('resposta <> ""')->where('status', '!=', 5)->whereNotNull('resposta')->count();
+           })->whereRaw('resposta <> ""')
+               ->whereRaw("char_length(resposta) <= 5000")
+               ->where('status', '!=', 5)
+               ->whereNotNull('resposta')
+               ->count();
         });
     }
 
     public function getTotalPerguntasAnoFromDatabase()
     {
-        return Cache::remember("total_perguntas_anos", 36000, function ()  {
+        return Cache::remember("total_perguntas_anos", 3600, function ()  {
             return  $this->perguntaModel
                 ->select(DB::raw('count(*) as count'),
                     DB::raw("DATE_FORMAT(datapergunta, '%Y') AS ano"))
@@ -55,6 +60,7 @@ class PerguntasRepository
                 ->where('status', '!=', 5)
                 ->whereNotNull('resposta')
                 ->whereRaw('resposta <> ""')
+                ->whereRaw("char_length(resposta) <= 5000")
                 ->whereNot(function ($query) {
                     $query->where('resposta', 'like', "%table%");
                 })
@@ -73,6 +79,7 @@ class PerguntasRepository
             })->whereNot(function ($query) {
                 $query->where('resposta', 'like', "%base64%");
             })->whereNotNull('migrado_em')
+                ->whereRaw("char_length(resposta) <= 5000")
                 ->where('status', '!=', 5)
                 ->whereNotNull('resposta_tribe')
                 ->whereYear('datapergunta', $ano)->count();
