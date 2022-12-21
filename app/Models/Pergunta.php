@@ -31,8 +31,8 @@ class Pergunta extends Model
             ->join('perguntastipo', 'perguntas.idtipo', '=', 'perguntastipo.id')
             ->select('perguntas.*', 'perguntasassunto.titulo as assunto', 'perguntastipo.titulo as tipo')
             ->where('migrado_em', NULL)
-            ->where('status', '!=', 5)
-            ->where('datapergunta', '>=', '2020-01-01 00:00:01')
+            ->where('status', 1)
+            ->where('datapergunta', '>=', '2010-01-01 00:00:01')
             ->whereNot(function ($query) {
                 $query->where('resposta', 'like', "%table%");
             })
@@ -42,6 +42,7 @@ class Pergunta extends Model
             ->where('perguntas.id', $pergunta)
             ->whereNotNull('resposta')
             ->whereRaw('resposta <> ""')
+            ->whereRaw("char_length(resposta) <= 5000")
             ->firstOrFail();
     }
 
@@ -49,10 +50,11 @@ class Pergunta extends Model
     {
         return Pergunta::where('id', $pergunta)
             ->whereNotNull('idTribe')
-            ->where('status', '!=', 5)
+            ->where('status', 1)
             ->whereNotNull('resposta')
             ->whereRaw('resposta <> ""')
             ->where('resposta_tribe', NULL)
+            ->whereRaw("char_length(resposta) <= 5000")
             ->firstOrFail();
     }
 
@@ -60,10 +62,11 @@ class Pergunta extends Model
     {
         return Pergunta::whereNotNull('idTribe')
             ->whereRaw('resposta <> ""')
-            ->where('status', '!=', 5)
+            ->where('status', 1)
             ->where('resposta_tribe', NULL)
             ->whereNotNull('migrado_em')
             ->where('resposta_tribe', NULL)
+            ->whereRaw("char_length(resposta) <= 5000")
             ->get();
     }
 

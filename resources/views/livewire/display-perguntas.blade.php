@@ -51,7 +51,6 @@
                             @error('pergunta')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
-                            <livewire:display-areas />
                         </div>
 
                     </form>

@@ -39,7 +39,7 @@ class MigrarPerguntaController extends Controller
         }
         MigrateQuestion::withChain([
             new ReplyQuestion($validated['pergunta'], $token, $consultor)
-        ])->dispatch($validated['pergunta'], $validated['area'], $token);
+        ])->dispatch($validated['pergunta'], $validated['areaLegalmatic'], $token);
 
        return redirect('horizon/dashboard');
     }
@@ -59,14 +59,15 @@ class MigrarPerguntaController extends Controller
             ->whereNotNull('resposta')
             ->whereRaw('resposta <> ""')
             ->where('idTribe', NULL)
-            ->where('status', '!=', 5)
+            ->where('status', 1)
             ->whereNot( function ($query) {
                 $query->where('resposta', 'like', "%table%");
             })
             ->whereNot(function ($query) {
                 $query->where('resposta', 'like', "%base64%");
             })
-            ->where('datapergunta', '>=', '2020-01-01 00:00:01')
+            ->where('datapergunta', '>=', '2010-01-01 00:00:01')
+            ->whereRaw("char_length(resposta) <= 5000")
             ->where('area',  $area)
             ->limit($validated['number'])
             ->orderByDesc('datapergunta')
