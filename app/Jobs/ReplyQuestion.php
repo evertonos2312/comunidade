@@ -70,7 +70,7 @@ class ReplyQuestion implements ShouldQueue
         $idTribe = $pergunta->idTribe;
         Log::channel('question')->info('Question reply started',$log);
         $accessToken = $this->token;
-        $postTypeDiscussion = 'pFx8jaZAk22gnhS';
+        $postTypeComment = 'CXRU7tgKtV6NS8c';
 
         $client = ClientBuilder::build(
             getenv('COMMUNITY_GRAPHQL'),
@@ -107,7 +107,7 @@ class ReplyQuestion implements ShouldQueue
             }
             MUTATION;
         $variables = [
-            'postType' => $postTypeDiscussion,
+            'postType' => $postTypeComment,
             'postId' => $idTribe,
             'replyText' => $replyText,
             "publishedAt" => $publishedAt,

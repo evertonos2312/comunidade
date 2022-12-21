@@ -43,7 +43,7 @@ class PerguntasRepository
                $query->where('resposta', 'like', "%base64%");
            })->whereRaw('resposta <> ""')
                ->whereRaw("char_length(resposta) <= 5000")
-               ->where('status', '!=', 5)
+               ->where('status', 1)
                ->whereNotNull('resposta')
                ->count();
         });
@@ -57,7 +57,7 @@ class PerguntasRepository
                     DB::raw("DATE_FORMAT(datapergunta, '%Y') AS ano"))
                 ->groupBy(DB::raw( "YEAR(datapergunta)"))
                 ->orderByDesc('ano')
-                ->where('status', '!=', 5)
+                ->where('status', 1)
                 ->whereNotNull('resposta')
                 ->whereRaw('resposta <> ""')
                 ->whereRaw("char_length(resposta) <= 5000")
@@ -80,7 +80,7 @@ class PerguntasRepository
                 $query->where('resposta', 'like', "%base64%");
             })->whereNotNull('migrado_em')
                 ->whereRaw("char_length(resposta) <= 5000")
-                ->where('status', '!=', 5)
+                ->where('status', 1)
                 ->whereNotNull('resposta_tribe')
                 ->whereYear('datapergunta', $ano)->count();
         });
