@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContmakerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MigrarPerguntaController;
 use App\Http\Controllers\ProfileController;
@@ -33,6 +34,8 @@ Route::middleware('auth.token')->group(function () {
     Route::post('/migrar-perguntas', [MigrarPerguntaController::class, 'store'])->name('migrar.pergunta');
     Route::post('migrar-lote', [MigrarPerguntaController::class, 'lote'])->name('migrar.pergunta.lote');
     Route::get('/retry', [MigrarPerguntaController::class, 'replyMigratedQuestions'])->name('retry');
+
+    Route::get('/contmaker', [ContmakerController::class, 'index'])->name('contmaker');
 });
 
 require __DIR__.'/auth.php';
