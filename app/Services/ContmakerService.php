@@ -9,10 +9,32 @@ class ContmakerService
 {
     public function getMembros()
     {
-        return [
-            0 => ['email' => 'everton.oliveirasilva@outlook.com', 'nome' => 'Everton Silva']
-        ];
+        $csvFileName = "colaboradores_ativos.csv";
+        $csvFile = public_path('csv/' . $csvFileName);
+
+        ini_set('auto_detect_line_endings',TRUE);
+        $row = 1;
+        $membros = [];
+        if (($handle = fopen($csvFile, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+                $data = array_map("utf8_encode", $data);
+                if($data[0] != "" && $data[1] != "" && $data[0] != "Usuario" && $data[1] != "Email") {
+                    $num = count($data);
+                    $row++;
+                    $membros[$row]['nome'] = $this->encodeToUtf8($data[0]);
+                    $membros[$row]['email'] = $data[1];
+                }
+            }
+            fclose($handle);
+        }
+        return $membros;
     }
+
+    private function encodeToUtf8($string) {
+        return mb_convert_encoding( $string, 'Windows-1252', 'UTF-8');
+    }
+
+
 
     public function getMensagem()
     {

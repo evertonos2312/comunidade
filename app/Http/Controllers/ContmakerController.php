@@ -21,12 +21,17 @@ class ContmakerController extends Controller
     {
         $token = session()->get('AUTH_USER')['token'];
         $membros = $this->contmakerService->getMembros();
+        echo '<pre>';
+        print_r($membros);
+        echo '</pre>';
+        die();
+
         $mensagem = $this->contmakerService->getMensagem();
 
         $listAllJobs = [];
         foreach ($membros as $membro) {
             $job = new Contmaker($token, $membro['email'], $membro['nome'], $mensagem);
-            $listAllJobs = $job;
+            $listAllJobs[] = $job;
         }
         Bus::batch($listAllJobs)->name('Sending Emails')->dispatch();
         return redirect('horizon/batches');

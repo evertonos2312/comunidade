@@ -17,10 +17,10 @@ class EnsureInviter
      */
     public function handle(Request $request, Closure $next)
     {
-//        $authUser = session()->get('AUTH_USER');
-//        if ($authUser['name'] == 'Base de Conhecimento') {
-//            die('Não são permitidos convites com este perfil');
-//        }
+        $authUser = session()->get('AUTH_USER');
+        if ($authUser['name'] == 'Base de Conhecimento') {
+            die('Não são permitidos convites com este perfil');
+        }
         return $next($request);
     }
 }

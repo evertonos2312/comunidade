@@ -86,7 +86,6 @@ class Contmaker implements ShouldQueue, ShouldBeUnique
             $this->fail($exception);
         } else {
             $log = [
-                "id" => $response->getData()['createPost']['id'],
                 "email" => $this->emailTo
             ];
 
