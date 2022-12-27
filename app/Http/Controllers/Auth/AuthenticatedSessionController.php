@@ -56,4 +56,14 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
+
+    public function forceDestroy()
+    {
+        Auth::guard('web')->logout();
+        session()->flush();
+
+        session()->flash('msg', 'Não são permitidos convites com este perfil');
+
+        return redirect('/login');
+    }
 }

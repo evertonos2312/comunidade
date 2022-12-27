@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\EnsureAuthUser;
 use App\Http\Middleware\EnsureGuestTokenIsValid;
+use App\Http\Middleware\EnsureInviter;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -67,6 +68,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'guest.token' => EnsureGuestTokenIsValid::class,
-        'auth.token' => EnsureAuthUser::class
+        'auth.token' => EnsureAuthUser::class,
+        'inviter' => EnsureInviter::class
     ];
 }
