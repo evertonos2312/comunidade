@@ -21,10 +21,7 @@ class ContmakerController extends Controller
     {
         $token = session()->get('AUTH_USER')['token'];
         $membros = $this->contmakerService->getMembros();
-        echo '<pre>';
-        print_r($membros);
-        echo '</pre>';
-        die();
+
 
         $mensagem = $this->contmakerService->getMensagem();
 

@@ -30,7 +30,12 @@ class ContmakerService
         return $membros;
     }
 
-    private function encodeToUtf8($string) {
+    private function encodeToUtf8($string)
+    {
+        $encoding = mb_detect_encoding($string, 'UTF-8, ISO-8859-1, WINDOWS-1252, WINDOWS-1251', true);
+        if ($encoding != 'UTF-8') {
+            $string = iconv($encoding, 'UTF-8//IGNORE', $string);
+        }
         return mb_convert_encoding( $string, 'Windows-1252', 'UTF-8');
     }
 
